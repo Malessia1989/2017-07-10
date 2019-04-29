@@ -7,13 +7,17 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jgrapht.Graph;
+import org.jgrapht.graph.DefaultWeightedEdge;
+
 import it.polito.tdp.artsmia.model.ArtObject;
+import it.polito.tdp.artsmia.model.ArtObjectAndCount;
 
 public class ArtsmiaDAO {
 
 	public List<ArtObject> listObjects() {
 		
-		String sql = "SELECT * from objects";
+		String sql = "SELECT * from objects ";
 		List<ArtObject> result = new ArrayList<>();
 		Connection conn = DBConnect.getConnection();
 
@@ -38,4 +42,68 @@ public class ArtsmiaDAO {
 		}
 	}
 	
+	public int contaExhibitionComuni(ArtObject aop, ArtObject aoa) {
+		
+		String sql="  select count(*) as cnt " + 
+				"from exhibition_objects as eo1, exhibition_objects as eo2 " + 
+				"where eo1.exhibition_id=eo2.exhibition_id  " + 
+				"and eo1.object_id= ? " + 
+				"and eo2.object_id= ? ";
+		
+			Connection conn= DBConnect.getConnection();
+		
+			try {
+				PreparedStatement st= conn.prepareStatement(sql);
+				
+				st.setInt(1, aop.getId());
+				st.setInt(2,aop.getId());
+				
+				
+				ResultSet res= st.executeQuery();
+				
+				res.next();
+				int conteggio= res.getInt("cnt");
+				
+				conn.close();
+				return conteggio;
+		
+					
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+				throw new RuntimeException(e);
+			}
+	}
+	
+	public List<ArtObjectAndCount> listArtObjrctAndCount(ArtObject ao) {
+		
+		String sql=" select count(eo2.exhibition_id) as cnt ,eo2.object_id as id  " + 
+				"from exhibition_objects as eo1, exhibition_objects as eo2 " + 
+				"where eo1.exhibition_id=eo2.exhibition_id " + 
+				"and eo1.object_id=? " + 
+				"and eo2.object_id> eo1.object_id " + 
+				"group by eo2.object_id ";
+		
+		Connection conn= DBConnect.getConnection();
+		List<ArtObjectAndCount> result= new ArrayList<>();
+		
+		try {
+			PreparedStatement st= conn.prepareStatement(sql);
+			st.setInt(1, ao.getId());
+			
+			ResultSet rs=st.executeQuery();
+			
+			while(rs.next()) {
+				result.add(new ArtObjectAndCount(rs.getInt("id"),rs.getInt("cnt")));
+			}
+			
+			conn.close();
+			return result;
+			
+		} catch (Exception e) {
+		e.printStackTrace();
+		throw new RuntimeException(e);
+		}
+	
+	}
 }
