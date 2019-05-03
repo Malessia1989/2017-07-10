@@ -7,6 +7,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jgrapht.graph.DefaultWeightedEdge;
+import org.jgrapht.graph.SimpleWeightedGraph;
+
 import it.polito.tdp.artsmia.model.ArtObject;
 
 public class ArtsmiaDAO {
@@ -36,6 +39,50 @@ public class ArtsmiaDAO {
 			e.printStackTrace();
 			return null;
 		}
+	}
+
+	public void creGrafo(SimpleWeightedGraph<ArtObject, DefaultWeightedEdge> grafo) {
+		
+		String sql="select o1.object_id id1,  eo1.exhibition_id ex1, o1.title name1, o2.object_id id2, eo2.exhibition_id ex2, o2.title name2, count(*) as peso\n" + 
+				"from objects o1, objects o2, exhibitions ex, exhibition_objects eo1, exhibition_objects eo2\n" + 
+				"where o1.object_id=eo1.object_id\n" + 
+				"and o2.object_id=eo2.object_id\n" + 
+				"and ex.exhibition_id=eo1.exhibition_id\n" + 
+				"and ex.exhibition_id=eo2.exhibition_id\n" + 
+				"and o1.object_id> o2.object_id\n" + 
+				"group by id1,id2";
+		
+		Connection conn = DBConnect.getConnection();
+
+		try {
+			PreparedStatement st = conn.prepareStatement(sql);
+			ResultSet res = st.executeQuery();
+			while (res.next()) {
+				
+				ArtObject o1=new ArtObject(res.getInt("id1"), res.getString("name1"));
+				ArtObject o2= new ArtObject(res.getInt("id2"), res.getString("name2"));
+				
+				if(!grafo.containsVertex(o1)) {
+					grafo.addVertex(o1);
+					
+				}
+				if(!grafo.containsVertex(o2)) {
+					grafo.addVertex(o2);
+				}
+				if(!grafo.containsEdge(o1,o2) || !grafo.containsEdge(o2,o1)) {
+					DefaultWeightedEdge edge= grafo.addEdge(o1, o2);
+					grafo.setEdgeWeight(edge, res.getInt("peso"));
+				}
+
+			
+			}
+			conn.close();
+			
+			
+		} catch (SQLException e) {
+			throw new RuntimeException("Errore DB");
+		}
+		
 	}
 	
 }
