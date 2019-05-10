@@ -53,5 +53,24 @@ public class Model {
 	public int getEdgeSize() {
 		return grafo.edgeSet().size();
 	}
+
+	public String getComponenteConnessa(String inserito) {
+		
+		if(grafo==null) {
+			creaGrafo();
+		}
+	
+		ArtObject otemp =idMap.get(Integer.parseInt(inserito));
+		List<ArtObject> lista= Graphs.neighborListOf(grafo, otemp);
+		
+		return ""+ lista.size();
+		
+		
+	}
+
+	public boolean isDigit(String inserito) {
+		
+		return inserito.matches("\\d+");
+	}
 	
 }
