@@ -58,6 +58,7 @@ public class ArtsmiaDAO {
 			PreparedStatement st = conn.prepareStatement(sql);
 			ResultSet res = st.executeQuery();
 			while (res.next()) {
+				// posso farlo con idMap<Integer,ArtObject>
 				
 				ArtObject o1=new ArtObject(res.getInt("id1"), res.getString("name1"));
 				ArtObject o2= new ArtObject(res.getInt("id2"), res.getString("name2"));
@@ -69,7 +70,7 @@ public class ArtsmiaDAO {
 				if(!grafo.containsVertex(o2)) {
 					grafo.addVertex(o2);
 				}
-				if(!grafo.containsEdge(o1,o2) || !grafo.containsEdge(o2,o1)) {
+				if(!grafo.containsEdge(o1,o2) && !grafo.containsEdge(o2,o1)) {
 					DefaultWeightedEdge edge= grafo.addEdge(o1, o2);
 					grafo.setEdgeWeight(edge, res.getInt("peso"));
 				}

@@ -1,5 +1,6 @@
 package it.polito.tdp.artsmia.model;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import org.jgrapht.Graphs;
@@ -16,9 +17,10 @@ public class Model {
 
 	public void popolaGrafo() {
 		
-		if(grafo== null) {
+		if(grafo == null) {
 			grafo=new SimpleWeightedGraph<>(DefaultWeightedEdge.class);
 			ArtsmiaDAO dao=new ArtsmiaDAO();
+			//passo solo grafo, non inserisco nessun input per creare il grafo
 			dao.creGrafo(grafo);
 		}
 		
@@ -35,22 +37,18 @@ public class Model {
 				
 		int id=Integer.parseInt(objId);
 		ArtObject otemp=null;
-		String risultato="";
+		//String risultato="";
 		for(ArtObject c: grafo.vertexSet()) {
-			if (c.getId()== id) {
+			if (c.getId() == id) {
 				otemp=c;
 			}
 		}
-		ConnectivityInspector<ArtObject, DefaultWeightedEdge> inspector= new ConnectivityInspector<>(grafo);
-		risultato+="Componenti connessi : " +inspector.connectedSets().size();
+//		ConnectivityInspector<ArtObject, DefaultWeightedEdge> inspector= new ConnectivityInspector<>(grafo);
+//		risultato+="Componenti connessi : " +inspector.connectedSets().size();
 		
-		
-//		String risultato="";
-//		for(ArtObject a: elenco) {
-//			risultato+= a.getId()+ " "+ a.getTitle()+"\n";
-//		}
-		
-		return risultato;
+		List<ArtObject> lista = new LinkedList<>(Graphs.neighborListOf(grafo, otemp));
+				
+		return "" +lista.size();
 	}
 
 }

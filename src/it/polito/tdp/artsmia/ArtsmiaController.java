@@ -47,7 +47,7 @@ public class ArtsmiaController {
 
 	@FXML
 	void doAnalizzaOggetti(ActionEvent event) {
-		
+				
 		model.popolaGrafo();
 		txtResult.setText("Grafo creato");
 	}
