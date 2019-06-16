@@ -47,18 +47,21 @@ public class ArtsmiaController {
 
 	@FXML
 	void doAnalizzaOggetti(ActionEvent event) {
+		
 		this.model.creaGrafo();
-		txtResult.setText("Grafo creato" +model.getVertexSize() +" vertici e" +model.getEdgeSize() +" archi");
+		txtResult.setText("Grafo creato " +model.getVertexSize() +" vertici e " +model.getEdgeSize() +" archi ");
 		
 		
 	}
 
 	@FXML
 	void doCalcolaComponenteConnessa(ActionEvent event) {
+		
 		String inserito = txtObjectId.getText();
 
 		if (!inserito.isEmpty()) {
 			if (model.isDigit(inserito)) {
+				this.model.creaGrafo();
 				String elenco = model.getComponenteConnessa(inserito);
 				txtResult.setText(elenco);
 
