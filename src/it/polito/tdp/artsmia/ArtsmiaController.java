@@ -10,6 +10,8 @@ import java.util.ResourceBundle;
 import it.polito.tdp.artsmia.model.Model;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextArea;
@@ -52,7 +54,24 @@ public class ArtsmiaController {
 
 	@FXML
 	void doCalcolaComponenteConnessa(ActionEvent event) {
-		txtResult.setText("doCalcolaComponenteConnessa");
+		String idInput= txtObjectId.getText();
+		if(idInput != null && !idInput.isEmpty()) {
+			if(model.isDigit(idInput)) {
+				String res=model.componenteConnessa(idInput);
+				txtResult.setText(res);
+			}else {
+				showAlert("Id non valido!");
+			}
+		}else {
+			showAlert("Inserire un id!");
+		}
+	}
+
+	private void showAlert(String message) {
+		Alert alert = new Alert(AlertType.ERROR);
+		alert.setContentText(message);
+		alert.show();	
+		
 	}
 
 	@FXML

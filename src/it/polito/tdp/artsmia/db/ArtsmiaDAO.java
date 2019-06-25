@@ -23,17 +23,20 @@ public class ArtsmiaDAO {
 			PreparedStatement st = conn.prepareStatement(sql);
 			ResultSet res = st.executeQuery();
 			while (res.next()) {
-				if(idMap.get(res.getInt("object_id")) == null) {
 
-				ArtObject artObj = new ArtObject(res.getInt("object_id"), res.getString("classification"), res.getString("continent"), 
-						res.getString("country"), res.getInt("curator_approved"), res.getString("dated"), res.getString("department"), 
-						res.getString("medium"), res.getString("nationality"), res.getString("object_name"), res.getInt("restricted"), 
-						res.getString("rights_type"), res.getString("role"), res.getString("room"), res.getString("style"), res.getString("title"));
-				
-				result.add(artObj);
-				idMap.put(artObj.getId(), artObj);
-				}else {
-					result.add(idMap.get(res.getInt("objext_id")));
+				if (!idMap.containsKey(res.getInt("object_id"))) {
+
+					ArtObject artObj = new ArtObject(res.getInt("object_id"), res.getString("classification"),
+							res.getString("continent"), res.getString("country"), res.getInt("curator_approved"),
+							res.getString("dated"), res.getString("department"), res.getString("medium"),
+							res.getString("nationality"), res.getString("object_name"), res.getInt("restricted"),
+							res.getString("rights_type"), res.getString("role"), res.getString("room"),
+							res.getString("style"), res.getString("title"));
+
+					result.add(artObj);
+					idMap.put(res.getInt("object_id"), artObj);
+				} else {
+					result.add(idMap.get(res.getInt("object_id")));
 				}
 			}
 			conn.close();
@@ -67,7 +70,7 @@ public class ArtsmiaDAO {
 				ArtObject a2 = idMap.get(res.getInt("id2"));
 				double peso = res.getDouble("peso");
 
-				if (a1 != null && a1 != null) {
+				if (a1 != null && a2 != null) {
 					Adiacenza a = new Adiacenza(a1, a2, peso);
 					result.add(a);
 				}
